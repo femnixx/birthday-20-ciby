@@ -19,44 +19,77 @@ export default function Page() {
     { icon: "🌈", title: "All of You", text: "Every little part of you, every quirk, every habit — I'd choose all of it, every day." },
   ];
 
+  // Grid container orchestration variants
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
+      transition: { staggerChildren: 0.12, delayChildren: 0.1 }
     }
   };
 
+  // Card items fly upwards from an angle on reveal, and collapse smoothly on exit
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 40 },
+    hidden: { opacity: 0, y: 50, scale: 0.9, rotateX: -10 },
     show: { 
       opacity: 1, 
       y: 0, 
+      scale: 1,
+      rotateX: 0,
       transition: { 
         type: "spring", 
         stiffness: 100,
-        damping: 20
+        damping: 18
       } 
     }
   };
 
+  // Section level wrapper entry and exit behaviors
+  const sectionFadeReveal: Variants = {
+    offscreen: { opacity: 0, y: 60, scale: 0.98 },
+    onscreen: { 
+      opacity: 1, 
+      y: 0,
+      scale: 1,
+      transition: { type: "spring", stiffness: 70, damping: 20, duration: 0.8 }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-sky-50 text-slate-900 relative overflow-x-hidden antialiased selection:bg-sky-200 selection:text-sky-900">
+    <div className="min-h-screen bg-sky-50 text-slate-900 relative overflow-x-hidden antialiased selection:bg-sky-200 selection:text-sky-900 perspective-1000">
       <FloatingElements />
       <Navbar />
-      <HeroSection />
+      
+      {/* Hero Wrapper Section */}
+      <motion.div
+        initial="offscreen"
+        whileInView="onscreen"
+        exit="offscreen"
+        viewport={{ once: false, amount: 0.15 }}
+        variants={sectionFadeReveal}
+      >
+        <HeroSection />
+      </motion.div>
 
-      {/* Collection Grid Container */}
-      <section id="reasons" className="py-28 bg-sky-50/50 relative border-t border-slate-200/60 z-20">
+      {/* Collection Grid Container Section */}
+      <motion.section 
+        id="reasons" 
+        className="py-28 bg-sky-50/50 relative border-t border-slate-200/60 z-20"
+        initial="offscreen"
+        whileInView="onscreen"
+        exit="offscreen"
+        viewport={{ once: false, amount: 0.1 }}
+        variants={sectionFadeReveal}
+      >
         <div className="absolute top-40 left-10 w-40 h-40 bg-sky-200/40 rounded-full filter blur-2xl pointer-events-none" />
         <div className="absolute bottom-40 right-10 w-48 h-48 bg-indigo-200/30 rounded-full filter blur-3xl pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-6 md:px-12">
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
             className="text-center mb-24 space-y-2"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
           >
             <h2 className="text-3xl md:text-5xl font-serif font-black tracking-tight text-slate-950">
               Our <span className="text-sky-600 italic font-bold">Collection</span>
@@ -71,7 +104,6 @@ export default function Page() {
             variants={containerVariants}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "-60px" }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {reasons.map((r, i) => {
@@ -80,8 +112,14 @@ export default function Page() {
                 <motion.div 
                   key={i} 
                   variants={itemVariants}
-                  whileHover={{ y: -6 }}
-                  transition={{ type: "spring", stiffness: 350, damping: 22 }}
+                  whileHover={{ 
+                    y: -10, 
+                    scale: 1.03, 
+                    rotateZ: i % 2 === 0 ? 1 : -1,
+                    boxShadow: "0px 20px 30px rgba(14, 165, 233, 0.1)"
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 20 }}
                   className={`h-full ${offsetClass}`}
                 >
                   <ReasonCard {...r} />
@@ -90,13 +128,40 @@ export default function Page() {
             })}
           </motion.div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Injecting Games Pipelines Instead of Old Sections */}
-      <CatchGame />
-      <FortuneCookie />
+      {/* Catch Game Section Wrapper */}
+      <motion.div
+        initial="offscreen"
+        whileInView="onscreen"
+        exit="offscreen"
+        viewport={{ once: false, amount: 0.2 }}
+        variants={sectionFadeReveal}
+        whileHover={{ scale: 1.005 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      >
+        <CatchGame />
+      </motion.div>
+
+      {/* Fortune Cookie Section Wrapper */}
+      <motion.div
+        initial="offscreen"
+        whileInView="onscreen"
+        exit="offscreen"
+        viewport={{ once: false, amount: 0.2 }}
+        variants={sectionFadeReveal}
+      >
+        <FortuneCookie />
+      </motion.div>
       
-      <ArcadeFooter />
+      {/* Footer Wrapper */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6 }}
+      >
+        <ArcadeFooter />
+      </motion.div>
     </div>
   );
 }

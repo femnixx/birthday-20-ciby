@@ -3,23 +3,29 @@
 import { motion } from 'framer-motion';
 
 export default function Navbar() {
+  const links = [
+    { name: "Home", href: "#hero" },
+    { name: "Reasons", href: "#reasons" },
+    { name: "Catch Game", href: "#catch-game" },
+    { name: "The Oracle", href: "#fortune-cookie" }
+  ];
+
   return (
-    <nav className="fixed top-0 w-full bg-white/70 backdrop-blur-md z-50 border-b border-slate-200/50">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 py-4 flex justify-between items-center">
-        <motion.span 
-          whileHover={{ scale: 1.02 }}
-          className="font-serif text-lg font-black tracking-tight text-slate-900 flex items-center gap-2"
-        >
-          Indri Collection <span className="text-xs font-sans font-medium text-sky-600 border border-sky-200 bg-sky-50/50 px-2 py-0.5 rounded-full">Edition</span>
-        </motion.span>
-        <div className="hidden md:flex space-x-8 text-xs font-bold tracking-widest uppercase text-slate-600">
-          <a href="#hero" className="hover:text-sky-600 transition-colors">Home</a>
-          <a href="#about" className="hover:text-sky-600 transition-colors">About Us</a>
-          <a href="#reasons" className="hover:text-sky-600 transition-colors">Reasons</a>
-        </div>
-        <button className="bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-4 py-2 rounded-full transition shadow-sm md:block hidden">
-          Explore Collection
-        </button>
+    <nav className="fixed top-0 left-0 w-full bg-white/60 backdrop-blur-md z-50 border-b border-slate-200/40 flex justify-center items-center py-4">
+      <div className="flex items-center gap-6 md:gap-8 text-xs font-bold tracking-widest uppercase text-slate-600">
+        {links.map((link, i) => (
+          <motion.a 
+            key={i}
+            href={link.href} 
+            className="relative hover:text-sky-600 transition-colors duration-200 py-1 px-2 group"
+            whileHover={{ scale: 1.1, y: -1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {link.name}
+            {/* Smooth sliding underline decorative bar */}
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-300 group-hover:w-full" />
+          </motion.a>
+        ))}
       </div>
     </nav>
   );
