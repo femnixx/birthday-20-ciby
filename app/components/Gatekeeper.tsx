@@ -29,19 +29,20 @@ import cinna2 from '../app/assets/cinnamoroll-2-removebg-preview.png';
 
 // --- Gatekeeper Component ---
 const Gatekeeper = ({ onUnlock }: { onUnlock: () => void }) => {
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(0); // 0: First q, 1: Second q
 
   const handleYes = () => {
     if (step === 0) {
       setStep(1);
     } else {
-      localStorage.setItem('gatePassed', 'true');
+      // Set expiry to 24 hours from now
+      const expiry = Date.now() + 24 * 60 * 60 * 1000;
+      localStorage.setItem('gatePassed', JSON.stringify({ expiry }));
       onUnlock();
     }
   };
 
   const handleNo = () => {
-    // Redirect away if they don't want to see it
     window.location.href = "https://www.google.com";
   };
 
@@ -82,8 +83,8 @@ const Gatekeeper = ({ onUnlock }: { onUnlock: () => void }) => {
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDinner, setSelectedDinner] = useState<number | null>(null);
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [selectedDinner, setSelectedDinner] = useState<number | null>(null);
 
   // Floating Character Helper Component
   const FloatingCharacter = ({ src, className }: { src: any, className: string }) => (
@@ -98,9 +99,19 @@ export default function Page() {
 
   // Asset Loading & Gatekeeper Logic
   useEffect(() => {
-    // Check gate status on mount
-    if (localStorage.getItem('gatePassed') === 'true') {
-      setIsUnlocked(true);
+    // Check gate status with 24h expiry
+    const stored = localStorage.getItem('gatePassed');
+    if (stored) {
+      try {
+        const { expiry } = JSON.parse(stored);
+        if (Date.now() < expiry) {
+          setIsUnlocked(true);
+        } else {
+          localStorage.removeItem('gatePassed');
+        }
+      } catch (e) {
+        localStorage.removeItem('gatePassed');
+      }
     }
 
     const handleLoad = () => {
