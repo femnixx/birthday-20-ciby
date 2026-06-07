@@ -4,7 +4,10 @@ import { motion } from 'framer-motion';
 
 export default function HeroSection() {
   return (
-    <section id="hero" className="relative min-h-[95vh] flex flex-col justify-between pt-24 bg-gradient-to-b from-sky-100/60 to-sky-50">
+    <section 
+      id="hero" 
+      className="relative min-h-[95vh] flex flex-col justify-between pt-24 bg-gradient-to-b from-sky-100/60 to-sky-50 overflow-hidden"
+    >
       <div className="max-w-6xl mx-auto px-6 md:px-12 w-full flex-grow flex flex-col md:flex-row items-center justify-center gap-12 py-12">
         
         {/* Left Text Block */}
@@ -25,9 +28,15 @@ export default function HeroSection() {
             Elevate your wardrobe with premium fashion pieces that blend elegance, quality, and timeless style tailored perfectly for Ciby.
           </p>
           <div className="pt-2">
-            <a href="#reasons" className="bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-full shadow-md hover:shadow-lg transition-all duration-200 inline-block">
+            <motion.a 
+              href="#reasons" 
+              className="bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-full shadow-md inline-block"
+              whileHover={{ scale: 1.05, y: -2, boxShadow: "0px 10px 20px rgba(14, 165, 233, 0.2)" }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            >
               Explore Collection
-            </a>
+            </motion.a>
           </div>
         </motion.div>
 
@@ -38,19 +47,32 @@ export default function HeroSection() {
           transition={{ delay: 0.2, duration: 0.8 }}
           className="flex-1 w-full max-w-md relative aspect-[4/3] bg-white rounded-2xl border border-slate-200/80 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.06)]"
         >
-          <div className="w-full h-full rounded-xl bg-slate-100 overflow-hidden relative group border border-slate-200">
+          <motion.div 
+            className="w-full h-full rounded-xl bg-slate-100 overflow-hidden relative group border border-slate-200"
+            whileHover={{ scale: 1.01 }}
+          >
             <div className="absolute inset-0 bg-gradient-to-tr from-sky-900/40 to-transparent z-10" />
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] flex items-center justify-center">
-              <span className="text-4xl filter drop-shadow-md animate-pulse">🌸</span>
+              <motion.span 
+                className="text-4xl filter drop-shadow-md"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+              >
+                🌸
+              </motion.span>
             </div>
-          </div>
-          <div className="absolute -bottom-4 -left-4 bg-white border border-slate-200 p-4 rounded-xl shadow-lg flex items-center gap-3">
+          </motion.div>
+
+          <motion.div 
+            className="absolute -bottom-4 -left-4 bg-white border border-slate-200 p-4 rounded-xl shadow-lg flex items-center gap-3"
+            whileHover={{ y: -4, scale: 1.02 }}
+          >
             <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center text-sm font-bold text-sky-700">6+</div>
             <div>
               <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Core Modules</p>
               <p className="text-xs font-bold text-slate-800">Verified Exhibits</p>
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
 
