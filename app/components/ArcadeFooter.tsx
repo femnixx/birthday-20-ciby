@@ -12,7 +12,7 @@ export default function ArcadeFooter() {
         className="space-y-2"
       >
         <p className="hover:text-sky-600 transition-colors duration-300 cursor-default">
-          Engineered with care for Ciby Arcade &copy; {new Date().getFullYear()}
+          Engineered with care alongside Surya&copy; {new Date().getFullYear()}
         </p>
         <div className="w-1 h-1 bg-sky-400 mx-auto rounded-full animate-ping" />
       </motion.div>
