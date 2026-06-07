@@ -6,16 +6,20 @@ interface ReasonProps {
   icon: string;
   title: string;
   text: string;
+  imageSrc?: string; // Optional image
 }
 
-export default function ReasonCard({ icon, title, text }: ReasonProps) {
+export default function ReasonCard({ icon, title, text, imageSrc }: ReasonProps) {
   return (
     <motion.div 
       className="bg-white border border-slate-200/80 p-6 md:p-8 rounded-2xl h-full flex flex-col items-start text-left shadow-[0_4px_20px_rgba(15,23,42,0.01)] relative overflow-hidden group"
-      whileHover={{ border: "1px solid rgba(14, 165, 233, 0.3)" }}
-      transition={{ duration: 0.2 }}
+      whileHover={{ 
+        border: "1px solid rgba(14, 165, 233, 0.3)",
+        y: -5 
+      }}
+      transition={{ duration: 0.3 }}
     >
-      {/* Background Soft Interactive Visual Anchor Glow */}
+      {/* Background Glow */}
       <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-sky-500/5 rounded-full filter blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <div className="w-12 h-12 bg-sky-50 border border-sky-100 rounded-xl flex items-center justify-center text-xl mb-5 shadow-sm group-hover:scale-110 transition-transform duration-300">
@@ -26,9 +30,16 @@ export default function ReasonCard({ icon, title, text }: ReasonProps) {
         {title}
       </h3>
       
-      <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-normal">
+      <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-normal mb-4">
         {text}
       </p>
+
+      {/* Image placement inside the flow so it doesn't break the layout */}
+      {imageSrc && (
+        <div className="w-full h-32 mt-auto overflow-hidden rounded-xl">
+          <img src={imageSrc} alt="Visual" className="w-full h-full object-cover" />
+        </div>
+      )}
     </motion.div>
   );
 }

@@ -52,11 +52,42 @@ export default function Page() {
     }
   };
 
+  // Standard fade for other sections
   const sectionFadeReveal: Variants = {
-    offscreen: { opacity: 0 },
+    offscreen: { opacity: 0, y: 20 },
     onscreen: { 
       opacity: 1, 
-      transition: { duration: 0.5, ease: "easeOut" }
+      y: 0,
+      transition: { duration: 0.6, ease: "easeOut" }
+    }
+  };
+
+  // SUBTLE: Slower, smaller movement for a refined feel
+  const sectionSubtleReveal: Variants = {
+    offscreen: { opacity: 0, y: 10 },
+    onscreen: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.8, ease: "easeInOut" }
+    }
+  };
+
+  // BOUNCY: Spring animation for the game/cookie
+  const sectionBounceReveal: Variants = {
+    offscreen: { 
+      opacity: 0, 
+      y: 100, 
+      scale: 0.9 
+    },
+    onscreen: { 
+      opacity: 1, 
+      y: 0, 
+      scale: 1,
+      transition: { 
+        type: "spring", 
+        bounce: 0.5, 
+        duration: 0.8 
+      }
     }
   };
 
@@ -90,10 +121,10 @@ export default function Page() {
             className="text-center mb-24 space-y-2"
           >
             <h2 className="text-3xl md:text-5xl font-serif font-black tracking-tight text-slate-950">
-              Our <span className="text-sky-600 italic font-bold">Collection</span>
+              Why <span className="text-sky-600 italic font-bold">You</span>
             </h2>
             <p className="text-xs font-semibold text-slate-400 tracking-widest uppercase">
-              Discover our handpicked selection of premium features designed for the modern individual
+              Why I love <span className='text-sky-600 italic font-bold'>You</span> and enjoy being together every single day of my life
             </p>
             <div className="w-16 h-1 bg-sky-600 mx-auto !mt-6 rounded-full" />
           </motion.div>
@@ -132,25 +163,25 @@ export default function Page() {
       {/* 3. CATCH GAME SECTION */}
       <CatchGame />
 
-      {/* 4. THE ORACLE (FORTUNE COOKIE) SECTION */}
+      {/* 4. THE ORACLE (FORTUNE COOKIE) SECTION - BOUNCY */}
       <motion.section
         id="fortune-cookie"
         initial="offscreen"
         whileInView="onscreen"
-        viewport={{ once: true, amount: 0.15 }}
-        variants={sectionFadeReveal}
+        viewport={{ once: false, amount: 0.15 }}
+        variants={sectionBounceReveal}
       >
         <FortuneCookie />
       </motion.section>
 
-      {/* 5. DINNER RECOMMENDATIONS SECTION */}
+      {/* 5. DINNER RECOMMENDATIONS SECTION - SUBTLE */}
       <motion.section
         id="dinner"
         className="py-28 bg-white relative z-20 border-t border-slate-200/50"
         initial="offscreen"
         whileInView="onscreen"
-        viewport={{ once: true, amount: 0.1 }}
-        variants={sectionFadeReveal}
+        viewport={{ once: false, amount: 0.1 }}
+        variants={sectionSubtleReveal}
       >
         <div className="max-w-6xl mx-auto px-6 md:px-12">
           <CurationHeader 

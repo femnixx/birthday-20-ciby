@@ -25,12 +25,12 @@ export interface DinnerSpotItem {
 }
 
 export const reasons: ReasonItem[] = [
-  { icon: "🌸", title: "Your Smile", text: "It literally makes the whole sky brighter, like actual sunshine in human form." },
-  { icon: "🌙", title: "Your Softness", text: "The way you are gentle and kind to everything around you is the most beautiful thing." },
-  { icon: "🐾", title: "Your Silliness", text: "Nobody makes me laugh the way you do. You're perfectly wonderfully weird." },
-  { icon: "🍡", title: "Your Warmth", text: "Being near you feels like wrapping up in the coziest blanket on a cloudy day." },
-  { icon: "✨", title: "Your Heart", text: "You love so deeply and so purely. The world is genuinely luckier having you in it." },
-  { icon: "🌈", title: "All of You", text: "Every little part of you, every quirk, every habit — I'd choose all of it, every day." },
+  { icon: "🌸", title: "Your Smile & Face When You Look At Me", text: "Even when it rains, the sky turns blue when it sees you smile, or at least that's what I feel inside me." },
+  { icon: "🌙", title: "Your Mercy & Forgiveness", text: "The way you are gentle and kind to everything around you, easy to forgive, but stern when needed is the most beautiful thing." },
+  { icon: "🐾", title: "Your Loveliness & Clinginess", text: "You make me feel perfectly cozy and comfortable, somebody that enjoys being with me and loves to meet." },
+  { icon: "🍡", title: "Your Intelligence & Devotion", text: "Your devotion to your cause and education makes me inspired to keep going, to keep fighting for us both." },
+  { icon: "✨", title: "Your Dedication", text: "Even in hard days you still push on and pick yoruself up, even picking other people up and motivating them when you yourself were shattered." },
+  { icon: "🌈", title: "All of You", text: "Every little part of you, every quirk, every habit — I'd choose all of it, every day. No matter the situation, whether hard or not, I'd end up choosing you." },
 ];
 
 export const dinnerSpots: DinnerSpotItem[] = [
