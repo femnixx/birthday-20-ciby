@@ -46,6 +46,7 @@ export default function SuggestionBox() {
 
   return (
     <motion.section
+      id="suggestions"
       initial="offscreen" whileInView="onscreen" viewport={{ once: false, amount: 0.2 }}
       variants={sectionFadeReveal}
       className="py-28 bg-sky-50 border-t border-slate-200/50"

@@ -11,7 +11,8 @@ export default function Navbar() {
     { name: "Reasons", href: "#reasons" },
     { name: "Catch Game", href: "#catch-game" },
     { name: "The Oracle", href: "#fortune-cookie" },
-    { name: "Dinner", href: "#dinner" }
+    { name: "Dinner", href: "#dinner" },
+    { name: "Suggestions", href: "#suggestions" }
   ];
 
   // Hamburger line transformation animations
