@@ -6,79 +6,88 @@ export default function HeroSection() {
   return (
     <section 
       id="hero" 
-      className="relative min-h-[95vh] flex flex-col justify-center pt-24 pb-20 bg-gradient-to-b from-sky-100/60 to-sky-50 overflow-hidden"
+      className="relative min-h-[90vh] flex items-center bg-gradient-to-br from-sky-50 via-white to-sky-50 overflow-hidden"
     >
-      <div className="max-w-6xl mx-auto px-6 md:px-12 w-full flex-grow flex flex-col md:flex-row items-center justify-center gap-12 py-12 relative z-10">
+      {/* Decorative background blobs */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-sky-200/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3" />
+      
+      <div className="max-w-6xl mx-auto px-6 md:px-12 w-full grid md:grid-cols-2 gap-12 items-center py-20 z-10">
         
-        {/* Left Text Block */}
+        {/* Left Content */}
         <motion.div 
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="flex-1 space-y-6 text-center md:text-left"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: false, amount: 0.2 }}
+          className="space-y-6 text-center md:text-left"
         >
-          <div className="inline-block bg-white border border-slate-200 text-sky-700 text-[10px] font-extrabold uppercase tracking-[0.25em] px-4 py-1.5 rounded-full shadow-sm">
-            ✨ Premium Celebration ✨
-          </div>
-          <h1 className="text-4xl md:text-6xl font-serif font-black tracking-tight text-slate-950 leading-[1.15]">
-            Discover Your <br />
-            <span className="text-sky-600 italic">Perfect Style</span>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center gap-2 bg-white border border-sky-100 text-sky-700 text-[10px] font-bold uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-sm"
+          >
+            <span>✨</span> Celebrating You <span>✨</span>
+          </motion.div>
+          
+          <h1 className="text-5xl md:text-7xl font-serif font-black text-slate-950 leading-[1.1]">
+            Happy Birthday, <br />
+            <span className="text-sky-600 italic">My Princess</span>
           </h1>
-          <p className="text-sm md:text-base text-slate-600 max-w-md leading-relaxed tracking-wide">
-            Elevate your wardrobe with premium fashion pieces that blend elegance, quality, and timeless style tailored perfectly for Ciby.
+          
+          <p className="text-slate-600 text-lg max-w-lg leading-relaxed mx-auto md:mx-0">
+            Thank you for being my everything. You make the world brighter just by being you. I hope today brings you as much joy as you’ve brought into my life.
           </p>
-          <div className="pt-2">
-            <motion.a 
-              href="#reasons" 
-              className="bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs uppercase tracking-wider px-8 py-4 rounded-full shadow-md inline-block"
-              whileHover={{ scale: 1.05, y: -2, boxShadow: "0px 10px 20px rgba(14, 165, 233, 0.2)" }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-            >
-              Explore Collection
-            </motion.a>
-          </div>
+
+          <motion.a 
+            href="#dinners"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-block bg-slate-950 text-white font-bold text-sm uppercase tracking-widest px-8 py-4 rounded-full shadow-xl hover:bg-sky-600 transition-colors"
+          >
+            See Our Celebration
+          </motion.a>
         </motion.div>
 
-        {/* Right Floating Display Block */}
+        {/* Right Visual Element */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.8 }}
-          className="flex-1 w-full max-w-md relative aspect-[4/3] bg-white rounded-2xl border border-slate-200/80 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.06)]"
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: false, amount: 0.2 }}
+          className="relative aspect-square max-w-sm mx-auto md:mx-0 flex items-center justify-center"
         >
+          {/* Pulsing ring background */}
           <motion.div 
-            className="w-full h-full rounded-xl bg-slate-100 overflow-hidden relative group border border-slate-200"
-            whileHover={{ scale: 1.01 }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 border border-dashed border-sky-300/50 rounded-full"
+          />
+          
+          <motion.div 
+            whileHover={{ rotate: [0, -10, 10, 0] }}
+            className="relative bg-white p-8 rounded-3xl shadow-2xl border border-sky-100 flex flex-col items-center gap-4 text-center cursor-pointer group"
           >
-            <div className="absolute inset-0 bg-gradient-to-tr from-sky-900/40 to-transparent z-10" />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3rem_3rem] flex items-center justify-center">
-              <motion.span 
-                className="text-4xl filter drop-shadow-md"
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-              >
-                🌸
-              </motion.span>
-            </div>
+            <span className="text-7xl">🌸</span>
+            <span className="font-serif font-bold text-slate-800 text-xl">My Everything</span>
+            <div className="h-1 w-12 bg-sky-500 rounded-full" />
+            
+            {/* Secret Message Reveal */}
+            <p className="text-[10px] uppercase tracking-widest text-slate-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+              I love you endlessly &lt;3
+            </p>
           </motion.div>
 
+          {/* Floating heart decoration */}
           <motion.div 
-            className="absolute -bottom-4 -left-4 bg-white border border-slate-200 p-4 rounded-xl shadow-lg flex items-center gap-3"
-            whileHover={{ y: -4, scale: 1.02 }}
+            animate={{ y: [0, -20, 0] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+            className="absolute -top-4 -right-4 bg-red-50 text-red-500 p-4 rounded-2xl shadow-lg"
           >
-            <div className="w-8 h-8 rounded-full bg-sky-100 flex items-center justify-center text-sm font-bold text-sky-700">6+</div>
-            <div>
-              <p className="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Core Modules</p>
-              <p className="text-xs font-bold text-slate-800">Verified Exhibits</p>
-            </div>
+            <span className="text-2xl">❤</span>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* Permanently fixed layout mask layer below the curve threshold */}
-      <div className="absolute -bottom-[2px] left-0 w-full overflow-hidden leading-[0] z-30 scale-y-110 origin-bottom pointer-events-none">
-        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[75px] fill-white">
+      {/* Footer Wave */}
+      <div className="absolute bottom-0 w-full overflow-hidden leading-[0] z-20">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="block w-full h-[60px] fill-white">
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V0C26.9,4.75,55.05,10.3,81.39,15.11,155.73,28.87,233.9,64.21,321.39,56.44Z"></path>
         </svg>
       </div>

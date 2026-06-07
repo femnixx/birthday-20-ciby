@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Play, Pause, RotateCcw, Trophy, Target } from "lucide-react";
 
 interface CatchItem {
   id: number;
@@ -13,6 +14,7 @@ interface CatchItem {
   isRare: boolean;
 }
 
+// Single object interface
 interface ScoreIndicator {
   id: number;
   x: number;
@@ -27,10 +29,26 @@ export default function CatchGame() {
   const [isPlaying, setIsPlaying] = useState(true);
   const [basketX, setBasketX] = useState(50);
   const [items, setItems] = useState<CatchItem[]>([]);
-  const [indicators, setIndicators] = useState<ScoreIndicator[]>([]);
+  
+  // CHANGED: State is now a single object or null, not an array
+  const [indicator, setIndicator] = useState<ScoreIndicator | null>(null);
+  
   const gameAreaRef = useRef<HTMLDivElement>(null);
+  const requestRef = useRef<number | null>(null);
+  const previousTimeRef = useRef<number | null>(null);
+  const lastSpawnTimeRef = useRef<number>(0);
+  
+  const basketXRef = useRef(50);
+  const isPlayingRef = useRef(true);
 
-  // Pool configurations mapped by rarity weights
+  useEffect(() => {
+    basketXRef.current = basketX;
+  }, [basketX]);
+
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
   const standardPool = [
     { emoji: "🌸", points: 1, label: "+1 Cherry Blossom" },
     { emoji: "🍡", points: 1, label: "+1 Mochi" },
@@ -48,7 +66,6 @@ export default function CatchGame() {
     { emoji: "💎", points: 50, label: "💎 FLAWLESS DIAMOND +50! 💎" },
   ];
 
-  // Hydrate high score safely in client execution context
   useEffect(() => {
     const savedHighScore = localStorage.getItem("ciby_arcade_highscore");
     if (savedHighScore) {
@@ -56,7 +73,6 @@ export default function CatchGame() {
     }
   }, []);
 
-  // Monitor score increases to evaluate personal records
   useEffect(() => {
     if (score > highScore) {
       setHighScore(score);
@@ -64,145 +80,158 @@ export default function CatchGame() {
     }
   }, [score, highScore]);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMoveInput = (clientX: number) => {
     if (!gameAreaRef.current || !isPlaying) return;
     const rect = gameAreaRef.current.getBoundingClientRect();
-    const newX = ((e.clientX - rect.left) / rect.width) * 100;
-    setBasketX(Math.max(6, Math.min(94, newX)));
+    const newX = ((clientX - rect.left) / rect.width) * 100;
+    setBasketX(Math.max(4, Math.min(96, newX)));
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    handleMoveInput(e.clientX);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!gameAreaRef.current || !e.touches[0] || !isPlaying) return;
-    const rect = gameAreaRef.current.getBoundingClientRect();
-    const newX = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
-    setBasketX(Math.max(6, Math.min(94, newX)));
+    if (e.touches[0]) {
+      handleMoveInput(e.touches[0].clientX);
+    }
   };
 
   useEffect(() => {
-    if (!isPlaying) return;
+    const gameLoop = (timestamp: number) => {
+      if (!previousTimeRef.current) previousTimeRef.current = timestamp;
+      const deltaTime = timestamp - previousTimeRef.current;
+      previousTimeRef.current = timestamp;
 
-    const spawnInterval = setInterval(() => {
-      const isRareSpawn = Math.random() < 0.12; // 12% probability parameter for rare drops
-      const selectedMeta = isRareSpawn 
-        ? rarePool[Math.floor(Math.random() * rarePool.length)]
-        : standardPool[Math.floor(Math.random() * standardPool.length)];
+      if (isPlayingRef.current) {
+        if (timestamp - lastSpawnTimeRef.current > 600) {
+          const isRareSpawn = Math.random() < 0.12;
+          const selectedMeta = isRareSpawn 
+            ? rarePool[Math.floor(Math.random() * rarePool.length)]
+            : standardPool[Math.floor(Math.random() * standardPool.length)];
 
-      setItems((prev) => [
-        ...prev,
-        {
-          id: Math.random() + Date.now(),
-          x: Math.random() * 88 + 6,
-          y: -5,
-          emoji: selectedMeta.emoji,
-          points: selectedMeta.points,
-          label: selectedMeta.label,
-          isRare: isRareSpawn,
-        },
-      ]);
-    }, 950);
+          setItems((prev) => [
+            ...prev,
+            {
+              id: Math.random() + timestamp,
+              x: Math.random() * 90 + 5,
+              y: -5,
+              emoji: selectedMeta.emoji,
+              points: selectedMeta.points,
+              label: selectedMeta.label,
+              isRare: isRareSpawn,
+            },
+          ]);
+          lastSpawnTimeRef.current = timestamp;
+        }
 
-    const physicsInterval = setInterval(() => {
-      setItems((prev) =>
-        prev
-          .map((item) => ({ ...item, y: item.y + (item.isRare ? 5 : 4.2) })) // Rares descend slightly quicker
-          .filter((item) => {
-            // Collision box intersection validation logic
-            if (item.y >= 84 && item.y <= 92 && Math.abs(item.x - basketX) < 11) {
-              setScore((s) => s + item.points);
-              
-              // Push pop-up feedback metadata indicator array
-              setIndicators((ind) => [
-                ...ind,
-                {
-                  id: Math.random(),
-                  x: item.x,
-                  y: item.y - 10,
-                  text: item.label,
-                  color: item.isRare ? "text-amber-500 font-extrabold" : "text-sky-600 font-bold"
-                }
-              ]);
-              return false;
-            }
-            return item.y < 102;
-          })
-      );
-    }, 30);
-
-    return () => {
-      clearInterval(spawnInterval);
-      clearInterval(physicsInterval);
+        const speedModifier = deltaTime * 0.05;
+        
+        setItems((prev) =>
+          prev
+            .map((item) => ({ ...item, y: item.y + (item.isRare ? 1.3 : 0.9) * speedModifier }))
+            .filter((item) => {
+              if (item.y >= 86 && item.y <= 93 && Math.abs(item.x - basketXRef.current) < 8) {
+                setScore((s) => s + item.points);
+                
+                const randomXOffset = (Math.random() - 0.5) * 40; 
+                const randomYOffset = (Math.random() - 0.5) * 30; 
+                
+                // CHANGED: Set single object
+                setIndicator({
+                    id: Math.random() + timestamp,
+                    x: Math.max(10, Math.min(90, item.x + randomXOffset)),
+                    y: item.y - 15 + randomYOffset,
+                    text: item.label,
+                    color: item.isRare 
+                      ? "text-amber-500 font-extrabold drop-shadow-[0_2px_4px_rgba(245,158,11,0.3)] text-xs" 
+                      : "text-sky-600 font-bold text-[11px]",
+                });
+                return false;
+              }
+              return item.y < 102;
+            })
+        );
+      }
+      requestRef.current = requestAnimationFrame(gameLoop);
     };
-  }, [basketX, isPlaying]);
 
-  // Handle auto-pruning stale dynamic canvas label nodes
+    requestRef.current = requestAnimationFrame(gameLoop);
+    return () => { if (requestRef.current) cancelAnimationFrame(requestRef.current); };
+  }, []);
+
+  // Simplified timeout to clear the single object
   useEffect(() => {
-    if (indicators.length > 0) {
+    if (indicator) {
       const pruneTimeout = setTimeout(() => {
-        setIndicators((prev) => prev.slice(1));
-      }, 1000);
+        setIndicator(null);
+      }, 1000); 
       return () => clearTimeout(pruneTimeout);
     }
-  }, [indicators]);
+  }, [indicator]);
 
   const resetGame = () => {
     setItems([]);
     setScore(0);
     setIsPlaying(true);
+    setIndicator(null); // Clear indicator on reset
   };
 
   return (
-    <section id="catch-game" className="py-24 bg-white relative z-20 border-t border-slate-100">
-      <div className="max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-xs font-extrabold uppercase tracking-[0.3em] text-sky-600 mb-2">Mini-Game One</h2>
-        <h3 className="text-3xl font-serif font-black text-slate-900 mb-4">Catch Ciby's Favorites</h3>
-        <p className="text-xs text-slate-500 max-w-md mx-auto mb-6">
-          Move your cursor or swipe left/right across the field to capture rewards. Gold entries yield extreme points!
-        </p>
+    <section id="catch-game" className="py-12 bg-slate-50 relative z-20 w-full min-h-screen flex items-center justify-center">
+      <div className="max-w-4xl w-full mx-auto px-6 flex flex-col">
+        <div className="text-center mb-6">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.35em] text-sky-600 mb-1">Mini-Game One</h2>
+          <h3 className="text-3xl font-serif font-black text-slate-800 tracking-tight">Catch Ciby's Favorites</h3>
+        </div>
 
-        {/* Dashboard Display Analytics Grid */}
-        <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6">
-          <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 text-center">
-            <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Current Run</p>
-            <p className="text-xl font-black text-slate-800">{score}</p>
+        <div className="grid grid-cols-2 gap-4 max-w-md mx-auto w-full mb-6">
+          <div className="bg-white/70 backdrop-blur-md border border-white/60 rounded-2xl p-3.5 flex items-center justify-between shadow-[0_4px_20px_rgba(15,23,42,0.03)]">
+            <div className="flex items-center gap-2">
+              <Target className="w-4 h-4 text-sky-500" />
+              <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">Run Score</span>
+            </div>
+            <p className="text-2xl font-black text-slate-800 tracking-tight">{score}</p>
           </div>
-          <div className="bg-amber-50/60 border border-amber-200/70 rounded-2xl p-3 text-center">
-            <p className="text-[10px] uppercase font-bold tracking-widest text-amber-600/80">Personal Best 🏆</p>
-            <p className="text-xl font-black text-amber-700">{highScore}</p>
+          <div className="bg-white/70 backdrop-blur-md border border-white/60 rounded-2xl p-3.5 flex items-center justify-between shadow-[0_4px_20px_rgba(15,23,42,0.03)]">
+            <div className="flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-amber-500" />
+              <span className="text-[11px] font-bold tracking-wider text-amber-600/80 uppercase">Best Record</span>
+            </div>
+            <p className="text-2xl font-black text-amber-700 tracking-tight">{highScore}</p>
           </div>
         </div>
 
-        {/* Primary Interactive Viewport Wrapper */}
-        <div className="relative">
+        <div className="relative p-3 bg-sky-200/40 rounded-[2.5rem] border border-sky-100 shadow-[0_20px_50px_rgba(14,165,233,0.1)]">
           <motion.div 
             ref={gameAreaRef}
             onMouseMove={handleMouseMove}
             onTouchMove={handleTouchMove}
-            className={`w-full h-80 bg-sky-50/40 border border-slate-200 rounded-3xl relative overflow-hidden select-none shadow-inner transition-all duration-300 ${
-              isPlaying ? "cursor-none" : "cursor-default opacity-85 grayscale-[20%]"
+            className={`w-full h-[500px] bg-white/40 backdrop-blur-xl border-2 border-white rounded-[2rem] relative overflow-hidden select-none shadow-[inset_0_4px_30px_rgba(14,165,233,0.04)] touch-none transition-all duration-300 ${
+              isPlaying ? "cursor-none" : "cursor-default opacity-90"
             }`}
           >
-            {/* Real-time floating hit notifications rendering engine */}
-            <AnimatePresence>
-              {indicators.map((ind) => (
+            {/* UPDATED: Only render the single object if it exists */}
+            <AnimatePresence mode="wait">
+              {indicator && (
                 <motion.div
-                  key={ind.id}
-                  initial={{ opacity: 0, y: ind.y, scale: 0.8 }}
-                  animate={{ opacity: 1, y: ind.y - 45, scale: 1 }}
+                  key={indicator.id}
+                  initial={{ opacity: 0, y: indicator.y, scale: 0.8 }}
+                  animate={{ opacity: 1, y: indicator.y - 60, scale: 1.05 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute text-[10px] pointer-events-none whitespace-nowrap drop-shadow-sm ${ind.color}`}
-                  style={{ left: `${ind.x}%`, transform: 'translateX(-50%)' }}
+                  className={`absolute pointer-events-none whitespace-nowrap drop-shadow-sm font-sans select-none tracking-wide text-center ${indicator.color}`}
+                  style={{ left: `${indicator.x}%`, transform: 'translateX(-50%)' }}
                 >
-                  {ind.text}
+                  {indicator.text}
                 </motion.div>
-              ))}
+              )}
             </AnimatePresence>
 
-            {/* Simulated Passive Falling Item Elements */}
             {items.map((item) => (
               <div
                 key={item.id}
-                className={`absolute text-2xl transition-all duration-75 pointer-events-none ${
-                  item.isRare ? "animate-pulse drop-shadow-[0_4px_6px_rgba(245,158,11,0.4)]" : "drop-shadow-sm"
+                className={`absolute text-3xl pointer-events-none transition-transform duration-75 select-none ${
+                  item.isRare ? "animate-bounce drop-shadow-[0_6px_12px_rgba(245,158,11,0.45)]" : "drop-shadow-sm"
                 }`}
                 style={{ left: `${item.x}%`, top: `${item.y}%`, transform: 'translateX(-50%)' }}
               >
@@ -210,46 +239,51 @@ export default function CatchGame() {
               </div>
             ))}
 
-            {/* Controlled User Paddle Basket Asset */}
             <div
-              className={`absolute bottom-6 h-9 w-24 bg-slate-900 border border-slate-800 rounded-xl text-white font-serif italic text-xs flex items-center justify-center font-bold shadow-md transition-all duration-75 ease-out`}
+              className="absolute bottom-8 h-11 px-5 bg-white/90 backdrop-blur-md border border-white rounded-xl text-sky-700 text-xs flex items-center justify-center font-black shadow-[0_10px_25px_rgba(14,165,233,0.16)] select-none pointer-events-none transition-all duration-75 ease-out"
               style={{ left: `${basketX}%`, transform: 'translateX(-50%)' }}
             >
-              🧺 Basket
+              <span className="mr-1.5 text-base not-italic">🧺</span> Basket
             </div>
 
-            {/* Suspended Interface Pause Screen Mask Layer */}
             {!isPlaying && (
-              <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center flex-col space-y-3">
-                <p className="font-serif font-black text-white text-lg tracking-wide">Gameplay Suspended</p>
+              <div className="absolute inset-0 bg-sky-950/10 backdrop-blur-[4px] flex items-center justify-center flex-col space-y-3">
+                <p className="font-sans font-black text-slate-800 text-sm uppercase tracking-widest drop-shadow-sm">Gameplay Suspended</p>
                 <button
                   onClick={() => setIsPlaying(true)}
-                  className="bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold uppercase tracking-wider py-2.5 px-6 rounded-full shadow-lg transition-transform active:scale-95"
+                  className="bg-white hover:bg-slate-50 text-sky-600 text-[11px] font-black uppercase tracking-wider py-3 px-7 rounded-full shadow-[0_6px_20px_rgba(14,165,233,0.25)] transition-transform active:scale-95 flex items-center gap-2"
                 >
-                  Resume Run ▶
+                  <Play className="w-3.5 h-3.5 fill-current" /> Resume Run
                 </button>
               </div>
             )}
           </motion.div>
         </div>
 
-        {/* Sub-Layout System Functional Controls Row */}
-        <div className="flex items-center justify-center gap-3 mt-6">
+        <div className="flex items-center gap-4 max-w-md mx-auto w-full mt-6">
           <button
             onClick={() => setIsPlaying(!isPlaying)}
-            className={`text-xs font-extrabold uppercase tracking-widest px-6 py-3 rounded-full border transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest py-3.5 rounded-2xl border transition-all active:scale-95 ${
               isPlaying 
-                ? "bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200" 
-                : "bg-sky-600 border-sky-600 text-white hover:bg-sky-700 shadow-md"
+                ? "bg-white/80 backdrop-blur-md border-sky-100 text-sky-600 shadow-[0_4px_12px_rgba(14,165,233,0.04)] hover:bg-sky-50/50" 
+                : "bg-sky-600 border-sky-600 text-white shadow-[0_4px_16px_rgba(14,165,233,0.24)] hover:bg-sky-700"
             }`}
           >
-            {isPlaying ? "⏸ Pause Run" : "▶ Resume Run"}
+            {isPlaying ? (
+              <>
+                <Pause className="w-3.5 h-3.5" /> Pause Run
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5 fill-current" /> Resume Run
+              </>
+            )}
           </button>
           <button
             onClick={resetGame}
-            className="text-xs font-extrabold uppercase tracking-widest bg-white border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-800 px-6 py-3 rounded-full transition-all"
+            className="flex-1 flex items-center justify-center gap-2 text-xs font-black uppercase tracking-widest bg-white/80 backdrop-blur-md border border-slate-200 text-slate-500 hover:text-slate-800 py-3.5 rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all active:scale-95"
           >
-            🔄 Reset Score
+            <RotateCcw className="w-3.5 h-3.5" /> Reset Score
           </button>
         </div>
       </div>
