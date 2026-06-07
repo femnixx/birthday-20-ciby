@@ -37,7 +37,7 @@ export default function HeroSection() {
           </p>
 
           <motion.a 
-            href="#dinners"
+            href="#reasons"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="inline-block bg-slate-950 text-white font-bold text-sm uppercase tracking-widest px-8 py-4 rounded-full shadow-xl hover:bg-sky-600 transition-colors"
