@@ -6,9 +6,9 @@ export default function HeroSection() {
   return (
     <section 
       id="hero" 
-      className="relative min-h-[95vh] flex flex-col justify-between pt-24 bg-gradient-to-b from-sky-100/60 to-sky-50 overflow-hidden"
+      className="relative min-h-[95vh] flex flex-col justify-center pt-24 pb-20 bg-gradient-to-b from-sky-100/60 to-sky-50 overflow-hidden"
     >
-      <div className="max-w-6xl mx-auto px-6 md:px-12 w-full flex-grow flex flex-col md:flex-row items-center justify-center gap-12 py-12">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 w-full flex-grow flex flex-col md:flex-row items-center justify-center gap-12 py-12 relative z-10">
         
         {/* Left Text Block */}
         <motion.div 
@@ -76,8 +76,8 @@ export default function HeroSection() {
         </motion.div>
       </div>
 
-      {/* Dynamic Smooth Wave Transition Divider */}
-      <div className="w-full overflow-hidden leading-[0] transform rotate-180 -mb-px">
+      {/* Wave Transition Divider - Pinned beautifully to the bottom floor */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0">
         <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[60px] fill-white">
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V0C26.9,4.75,55.05,10.3,81.39,15.11,155.73,28.87,233.9,64.21,321.39,56.44Z"></path>
         </svg>

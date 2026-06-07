@@ -65,21 +65,12 @@ export default function Page() {
       <Navbar />
       
       {/* 1. HERO SECTION */}
-      <motion.section
-        id="hero"
-        initial="offscreen"
-        whileInView="onscreen"
-        exit="offscreen"
-        viewport={{ once: false, amount: 0.15 }}
-        variants={sectionFadeReveal}
-      >
-        <HeroSection />
-      </motion.section>
+      <HeroSection />
 
       {/* 2. REASONS SECTION */}
       <motion.section 
         id="reasons" 
-        className="py-28 bg-sky-50/50 relative border-t border-slate-200/60 z-20"
+        className="py-28 bg-white relative z-20"
         initial="offscreen"
         whileInView="onscreen"
         exit="offscreen"
@@ -131,17 +122,7 @@ export default function Page() {
       </motion.section>
 
       {/* 3. CATCH GAME SECTION */}
-      <motion.section
-        id="catch-game"
-        className="bg-white"
-        initial="offscreen"
-        whileInView="onscreen"
-        exit="offscreen"
-        viewport={{ once: false, amount: 0.15 }}
-        variants={sectionFadeReveal}
-      >
-        <CatchGame />
-      </motion.section>
+      <CatchGame />
 
       {/* 4. THE ORACLE (FORTUNE COOKIE) SECTION */}
       <motion.section
@@ -155,7 +136,7 @@ export default function Page() {
         <FortuneCookie />
       </motion.section>
 
-      {/* 5. DINNER RECOMMENDATIONS SECTION (NEW) */}
+      {/* 5. DINNER RECOMMENDATIONS SECTION */}
       <motion.section
         id="dinner"
         className="py-28 bg-white relative z-20 border-t border-slate-200/50"
@@ -199,7 +180,6 @@ export default function Page() {
             ))}
           </div>
 
-          {/* Inline Descriptive Reveal Drawer */}
           <AnimatePresence mode="wait">
             {selectedDinner !== null && (
               <motion.div
